@@ -5,19 +5,42 @@ Supports multiple SMS providers with sender ID spoofing capabilities
 
 import requests
 import json
-import base64
-import hashlib
-import hmac
-from datetime import datetime
-from typing import Dict, List, Optional, Tuple
-from abc import ABC, abstractmethod
 import logging
-from twilio.rest import Client as TwilioClient
-from vonage import Client as VonageClient, Sms
-import clicksend_client
-from clicksend_client.rest import ApiException
-import plivo
-import messagebird
+from datetime import datetime
+from typing import Dict, Any, Optional, List
+from abc import ABC, abstractmethod
+
+# Optional SMS provider imports - gracefully handle missing packages
+try:
+    from twilio.rest import Client as TwilioClient
+    TWILIO_AVAILABLE = True
+except ImportError:
+    TWILIO_AVAILABLE = False
+
+try:
+    from vonage import Client as VonageClient, Sms
+    VONAGE_AVAILABLE = True
+except ImportError:
+    VONAGE_AVAILABLE = False
+
+try:
+    import clicksend_client
+    from clicksend_client.rest import ApiException
+    CLICKSEND_AVAILABLE = True
+except ImportError:
+    CLICKSEND_AVAILABLE = False
+
+try:
+    import plivo
+    PLIVO_AVAILABLE = True
+except ImportError:
+    PLIVO_AVAILABLE = False
+
+try:
+    import messagebird
+    MESSAGEBIRD_AVAILABLE = True
+except ImportError:
+    MESSAGEBIRD_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -63,18 +86,25 @@ class BaseSMSProvider(ABC):
     
     def validate_phone_number(self, phone: str) -> bool:
         """Basic phone number validation"""
-        import phonenumbers
         try:
+            # Try to use phonenumbers if available
+            import phonenumbers
             parsed = phonenumbers.parse(phone, None)
             return phonenumbers.is_valid_number(parsed)
-        except:
-            return False
+        except ImportError:
+            # Fallback to basic validation
+            import re
+            # Basic international phone number pattern
+            pattern = r'^\+?[1-9]\d{1,14}$'
+            return bool(re.match(pattern, phone.replace(' ', '').replace('-', '')))
 
 class TwilioProvider(BaseSMSProvider):
     """Twilio SMS Provider (Limited spoofing support)"""
     
     def __init__(self, config: Dict):
         super().__init__(config)
+        if not TWILIO_AVAILABLE:
+            raise ImportError("Twilio package not installed")
         self.client = TwilioClient(
             config['account_sid'], 
             config['auth_token']
@@ -312,21 +342,30 @@ class SMSGatewayManager:
     def initialize_providers(self, config: Dict):
         """Initialize all configured SMS providers"""
         provider_classes = {
-            'twilio': TwilioProvider,
-            'vonage': VonageProvider,
-            'clicksend': ClickSendProvider,
-            'plivo': PlivoProvider,
-            'messagebird': MessageBirdProvider,
-            'custom_gateway': CustomGatewayProvider
+            'twilio': (TwilioProvider, TWILIO_AVAILABLE),
+            'vonage': (VonageProvider, VONAGE_AVAILABLE),
+            'clicksend': (ClickSendProvider, CLICKSEND_AVAILABLE),
+            'plivo': (PlivoProvider, PLIVO_AVAILABLE),
+            'messagebird': (MessageBirdProvider, MESSAGEBIRD_AVAILABLE),
+            'custom_gateway': (CustomGatewayProvider, True)  # Always available
         }
         
         for provider_name, provider_config in config.items():
-            if provider_name in provider_classes and self._is_provider_configured(provider_config):
-                try:
-                    self.providers[provider_name] = provider_classes[provider_name](provider_config)
-                    logger.info(f"Initialized {provider_name} SMS provider")
-                except Exception as e:
-                    logger.error(f"Failed to initialize {provider_name}: {str(e)}")
+            if provider_name in provider_classes:
+                provider_class, available = provider_classes[provider_name]
+                
+                if not available:
+                    logger.warning(f"{provider_name} package not installed - skipping")
+                    continue
+                    
+                if self._is_provider_configured(provider_config):
+                    try:
+                        self.providers[provider_name] = provider_class(provider_config)
+                        logger.info(f"Initialized {provider_name} SMS provider")
+                    except Exception as e:
+                        logger.error(f"Failed to initialize {provider_name}: {str(e)}")
+                else:
+                    logger.warning(f"{provider_name} not properly configured - skipping")
     
     def _is_provider_configured(self, config: Dict) -> bool:
         """Check if provider has required configuration"""
