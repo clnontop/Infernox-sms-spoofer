@@ -14,9 +14,12 @@ load_dotenv()
 class Config:
     """Base configuration class"""
     
-    # Security Settings
-    SECRET_KEY = os.environ.get('SECRET_KEY') or Fernet.generate_key().decode()
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your-jwt-secret-key'
+    # Flask Configuration
+    SECRET_KEY = os.environ.get('SECRET_KEY', 'infernox-dev-secret-key-change-in-production')
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'infernox-jwt-secret-key-change-in-production')
+    
+    # Ensure we have the key in the right format for PyJWT
+    jwt_secret_key = JWT_SECRET_KEY
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
     
     # Database Configuration
@@ -72,14 +75,27 @@ class Config:
     
     # Security and Compliance Settings
     SECURITY = {
+        'jwt_secret_key': JWT_SECRET_KEY,
         'max_daily_sms': int(os.environ.get('MAX_DAILY_SMS', '100')),
         'max_hourly_sms': int(os.environ.get('MAX_HOURLY_SMS', '20')),
         'require_authorization': os.environ.get('REQUIRE_AUTHORIZATION', 'True').lower() == 'true',
-        'authorized_users': os.environ.get('AUTHORIZED_USERS', '').split(','),
-        'authorized_domains': os.environ.get('AUTHORIZED_DOMAINS', '').split(','),
-        'log_retention_days': int(os.environ.get('LOG_RETENTION_DAYS', '90')),
-        'audit_all_requests': True,
-        'block_suspicious_patterns': True
+        'authorized_users': os.environ.get('AUTHORIZED_USERS', 'admin').split(','),
+        'authorized_domains': os.environ.get('AUTHORIZED_DOMAINS', 'localhost,127.0.0.1').split(','),
+        'ip_whitelist': os.environ.get('IP_WHITELIST', '').split(',') if os.environ.get('IP_WHITELIST') else [],
+        'ip_blacklist': os.environ.get('IP_BLACKLIST', '').split(',') if os.environ.get('IP_BLACKLIST') else [],
+        'max_login_attempts': int(os.environ.get('MAX_LOGIN_ATTEMPTS', '5')),
+        'lockout_duration_minutes': int(os.environ.get('LOCKOUT_DURATION_MINUTES', '30')),
+        'session_timeout_hours': int(os.environ.get('SESSION_TIMEOUT_HOURS', '24')),
+        'password_min_length': int(os.environ.get('PASSWORD_MIN_LENGTH', '12')),
+        'default_admin_password': os.environ.get('DEFAULT_ADMIN_PASSWORD', 'infernox123!'),
+        'encryption_key': os.environ.get('ENCRYPTION_KEY'),
+        'enforce_session_ip': os.environ.get('ENFORCE_SESSION_IP', 'False').lower() == 'true',
+        'block_private_ips': os.environ.get('BLOCK_PRIVATE_IPS', 'False').lower() == 'true',
+        'sms_per_minute': int(os.environ.get('RATE_LIMIT_PER_MINUTE', '5')),
+        'sms_per_hour': int(os.environ.get('RATE_LIMIT_PER_HOUR', '50')),
+        'sms_per_day': int(os.environ.get('RATE_LIMIT_PER_DAY', '200')),
+        'login_per_minute': int(os.environ.get('LOGIN_RATE_LIMIT', '5')),
+        'api_per_minute': int(os.environ.get('API_RATE_LIMIT', '60'))
     }
     
     # Logging Configuration
