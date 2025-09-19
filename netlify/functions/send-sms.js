@@ -64,7 +64,7 @@ exports.handler = async (event, context) => {
       }
     );
 
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       return {
         statusCode: 200,
         headers,
