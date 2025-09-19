@@ -1,0 +1,37 @@
+[build]
+  functions = "netlify/functions"
+  publish = "."
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/api/sms/send"
+  to = "/.netlify/functions/send-sms"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth/login"
+  to = "/.netlify/functions/auth-login"
+  status = 200
+
+[[redirects]]
+  from = "/login"
+  to = "/templates/login.html"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/templates/dashboard.html"
+  status = 200
+
+[[redirects]]
+  from = "/"
+  to = "/templates/login.html"
+  status = 200
+
+[functions]
+  node_bundler = "esbuild"
+
+[dev]
+  functions = "netlify/functions"

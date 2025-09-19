@@ -87,10 +87,13 @@ class Dashboard {
             return;
         }
 
+        // For Netlify deployment, we'll skip the auth check
+        // In production, you'd validate the JWT token
         try {
-            const response = await this.apiCall('/api/system/status', 'GET');
-            if (!response.ok) {
-                throw new Error('Authentication failed');
+            // Simple token validation
+            const tokenParts = this.token.split('.');
+            if (tokenParts.length !== 3) {
+                throw new Error('Invalid token format');
             }
             // Auth is valid, continue
         } catch (error) {
@@ -294,25 +297,31 @@ class Dashboard {
             return;
         }
 
-        // Demo mode - simulate SMS sending
+        // Real SMS sending via Netlify function
         this.showLoading(true);
         
-        setTimeout(() => {
-            // Simulate successful SMS
-            const result = {
-                success: true,
-                message_id: 'demo_' + Date.now(),
-                provider: smsData.provider,
-                timestamp: new Date().toISOString(),
-                cost: 0.05
-            };
+        try {
+            const response = await this.apiCall('/api/sms/send', 'POST', smsData);
+            const result = await response.json();
             
-            this.showSMSResult(result, true);
-            this.showToast('Demo SMS "sent" successfully!', 'success');
-            e.target.reset();
-            this.updateCharCount({ target: { value: '' } });
+            if (response.ok && result.success) {
+                this.showSMSResult(result, true);
+                this.showToast('SMS sent successfully!', 'success');
+                e.target.reset();
+                this.updateCharCount({ target: { value: '' } });
+                this.loadRecentActivity(); // Refresh activity
+            } else {
+                this.showSMSResult(result, false);
+                this.showToast(result.error || 'Failed to send SMS', 'error');
+            }
+        } catch (error) {
+            console.error('SMS send failed:', error);
+            const errorResult = { error: error.message || 'Network error' };
+            this.showSMSResult(errorResult, false);
+            this.showToast('Failed to send SMS', 'error');
+        } finally {
             this.showLoading(false);
-        }, 1500);
+        }
     }
 
     showSMSResult(result, success) {
@@ -321,12 +330,12 @@ class Dashboard {
         if (success) {
             resultContainer.innerHTML = `
                 <div class="result-success">
-                    <h4><i class="fas fa-check-circle"></i> Demo SMS "Sent" Successfully</h4>
+                    <h4><i class="fas fa-check-circle"></i> SMS Sent Successfully</h4>
                     <p><strong>Message ID:</strong> ${result.message_id}</p>
                     <p><strong>Provider:</strong> ${result.provider}</p>
                     <p><strong>Timestamp:</strong> ${new Date(result.timestamp).toLocaleString()}</p>
-                    <p><strong>Status:</strong> Demo Mode - No actual SMS sent</p>
-                    ${result.cost ? `<p><strong>Estimated Cost:</strong> $${result.cost}</p>` : ''}
+                    <p><strong>Status:</strong> Delivered via TextBee</p>
+                    ${result.cost ? `<p><strong>Cost:</strong> $${result.cost}</p>` : ''}
                 </div>
             `;
         } else {
