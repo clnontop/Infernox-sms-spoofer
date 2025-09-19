@@ -59,7 +59,7 @@ class Config:
         },
         'textbee': {
             'api_key': os.environ.get('TEXTBEE_API_KEY', '935d4fa0-7467-48df-8510-2c4bebfe2f8f'),
-            'device_id': os.environ.get('TEXTBEE_DEVICE_ID', '23124RN87I'),
+            'device_id': os.environ.get('TEXTBEE_DEVICE_ID', '68ccffff546ea5f868e4eef6'),
             'supports_spoofing': True,
             'api_url': 'https://api.textbee.dev/api/v1'
         },
