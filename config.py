@@ -58,7 +58,7 @@ class Config:
             'api_url': 'https://rest.messagebird.com/messages'
         },
         'textbee': {
-            'api_key': os.environ.get('TEXTBEE_API_KEY', '935d4fa0-7467-48df-8510-2c4bebfe2f8f'),
+            'api_key': os.environ.get('TEXTBEE_API_KEY', '3aba67b9-0c34-4e77-b339-78234c6b9273'),
             'device_id': os.environ.get('TEXTBEE_DEVICE_ID', '68ccffff546ea5f868e4eef6'),
             'supports_spoofing': True,
             'api_url': 'https://api.textbee.dev/api/v1'
