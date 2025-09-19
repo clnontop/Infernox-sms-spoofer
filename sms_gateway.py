@@ -281,6 +281,66 @@ class MessageBirdProvider(BaseSMSProvider):
     def supports_spoofing(self) -> bool:
         return True
 
+class TextBeeProvider(BaseSMSProvider):
+    """TextBee SMS Provider with full spoofing support"""
+    
+    def __init__(self, config: Dict):
+        super().__init__(config)
+        self.api_key = config['api_key']
+        self.device_id = config['device_id']
+        self.base_url = 'https://api.textbee.dev/api/v1'
+    
+    def send_sms(self, to: str, message: str, sender_id: str = None) -> SMSResult:
+        try:
+            # TextBee API implementation
+            url = f"{self.base_url}/gateway/devices/{self.device_id}/send-sms"
+            
+            payload = {
+                'recipients': [to],
+                'message': message
+            }
+            
+            headers = {
+                'Content-Type': 'application/json',
+                'x-api-key': self.api_key
+            }
+            
+            response = requests.post(
+                url,
+                json=payload,
+                headers=headers,
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return SMSResult(
+                    success=True,
+                    message_id=data.get('id', f'textbee_{datetime.now().timestamp()}'),
+                    provider='textbee',
+                    status=data.get('status', 'sent'),
+                    cost=data.get('cost', 0.0)
+                )
+            else:
+                error_msg = f"HTTP {response.status_code}"
+                try:
+                    error_data = response.json()
+                    error_msg += f": {error_data.get('message', response.text)}"
+                except:
+                    error_msg += f": {response.text}"
+                
+                return SMSResult(
+                    success=False,
+                    error=error_msg,
+                    provider='textbee'
+                )
+        except Exception as e:
+            logger.error(f"TextBee SMS failed: {str(e)}")
+            return SMSResult(success=False, error=str(e), provider='textbee')
+    
+    def supports_spoofing(self) -> bool:
+        return True  # TextBee supports sender ID spoofing
+
 class CustomGatewayProvider(BaseSMSProvider):
     """Custom SMS Gateway Provider for specialized APIs"""
     
@@ -347,6 +407,7 @@ class SMSGatewayManager:
             'clicksend': (ClickSendProvider, CLICKSEND_AVAILABLE),
             'plivo': (PlivoProvider, PLIVO_AVAILABLE),
             'messagebird': (MessageBirdProvider, MESSAGEBIRD_AVAILABLE),
+            'textbee': (TextBeeProvider, True),  # Always available - uses requests
             'custom_gateway': (CustomGatewayProvider, True)  # Always available
         }
         
@@ -375,6 +436,7 @@ class SMSGatewayManager:
             'clicksend': ['username', 'api_key'],
             'plivo': ['auth_id', 'auth_token'],
             'messagebird': ['access_key'],
+            'textbee': ['api_key', 'device_id'],
             'custom_gateway': ['api_url', 'api_key']
         }
         

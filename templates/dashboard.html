@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infernox SMS Spoofing Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../static/css/dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-fire"></i>
+                    <span>Infernox</span>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a href="#dashboard" data-section="dashboard">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#sms" data-section="sms">
+                        <i class="fas fa-sms"></i>
+                        <span>Send SMS</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#providers" data-section="providers">
+                        <i class="fas fa-network-wired"></i>
+                        <span>Providers</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#audit" data-section="audit">
+                        <i class="fas fa-history"></i>
+                        <span>Audit Log</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#settings" data-section="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="username">Admin</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-header">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="header-actions">
+                    <div class="status-indicator">
+                        <span class="status-dot online"></span>
+                        <span>System Online</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="content-section active">
+                <div style="background: linear-gradient(135deg, #70a1ff, #5a67d8); color: white; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; text-align: center;">
+                    <h4><i class="fas fa-info-circle"></i> Demo Dashboard</h4>
+                    <p>This is a standalone demo of the Infernox SMS Dashboard. Backend functionality requires the Python server.</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-paper-plane"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="total-sms">127</h3>
+                            <p>Total SMS Sent</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="success-rate">98.5%</h3>
+                            <p>Success Rate</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="active-providers">3</h3>
+                            <p>Active Providers</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="security-events">0</h3>
+                            <p>Security Events</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Recent SMS Activity</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="recent-activity" class="activity-list">
+                                <div style="padding: 0.75rem 0; border-bottom: 1px solid #e1e8ed; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 500;">SMS to +1234567890</div>
+                                        <div style="font-size: 0.75rem; color: #a4b0be;">2 minutes ago</div>
+                                    </div>
+                                    <span style="color: #2ed573; font-size: 0.75rem;">Success</span>
+                                </div>
+                                <div style="padding: 0.75rem 0; border-bottom: 1px solid #e1e8ed; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 500;">SMS to +1987654321</div>
+                                        <div style="font-size: 0.75rem; color: #a4b0be;">5 minutes ago</div>
+                                    </div>
+                                    <span style="color: #2ed573; font-size: 0.75rem;">Success</span>
+                                </div>
+                                <div style="padding: 0.75rem 0; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 500;">SMS to +1555123456</div>
+                                        <div style="font-size: 0.75rem; color: #a4b0be;">10 minutes ago</div>
+                                    </div>
+                                    <span style="color: #2ed573; font-size: 0.75rem;">Success</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Provider Status</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="provider-status" class="provider-list">
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #e1e8ed;">
+                                    <span>TextBee</span>
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2ed573; animation: pulse 2s infinite;"></span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #e1e8ed;">
+                                    <span>Vonage</span>
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2ed573; animation: pulse 2s infinite;"></span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0;">
+                                    <span>ClickSend</span>
+                                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #2ed573; animation: pulse 2s infinite;"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SMS Section -->
+            <section id="sms-section" class="content-section">
+                <div class="sms-form-container">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Send SMS</h3>
+                            <div class="card-actions">
+                                <button class="btn btn-secondary" onclick="clearForm()">
+                                    <i class="fas fa-eraser"></i> Clear
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <form id="sms-form" class="sms-form">
+                                <div class="form-group">
+                                    <label for="recipient">Recipient Number</label>
+                                    <input type="tel" id="recipient" name="recipient" placeholder="+1234567890" required>
+                                    <small class="form-help">Include country code (e.g., +1 for US)</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="sender-id">Sender ID (Optional)</label>
+                                    <input type="text" id="sender-id" name="sender-id" placeholder="COMPANY" maxlength="11">
+                                    <small class="form-help">Custom sender ID for spoofing (max 11 characters)</small>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="message">Message</label>
+                                    <textarea id="message" name="message" rows="4" placeholder="Enter your message here..." required maxlength="160"></textarea>
+                                    <div class="message-counter">
+                                        <span id="char-count">0</span>/160 characters
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="provider">SMS Provider</label>
+                                        <select id="provider" name="provider">
+                                            <option value="">Auto-select</option>
+                                            <option value="textbee">TextBee (Recommended)</option>
+                                            <option value="vonage">Vonage</option>
+                                            <option value="clicksend">ClickSend</option>
+                                            <option value="plivo">Plivo</option>
+                                            <option value="messagebird">MessageBird</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="purpose">Purpose</label>
+                                        <select id="purpose" name="purpose" required>
+                                            <option value="security_testing">Security Testing</option>
+                                            <option value="penetration_testing">Penetration Testing</option>
+                                            <option value="educational_research">Educational Research</option>
+                                            <option value="authorized_simulation">Authorized Simulation</option>
+                                            <option value="compliance_testing">Compliance Testing</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="consent" name="consent" required>
+                                        <span class="checkmark"></span>
+                                        I confirm this SMS is for authorized testing purposes only and complies with applicable laws
+                                    </label>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-paper-plane"></i>
+                                        Send SMS
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Send Result</h3>
+                        </div>
+                        <div class="card-content">
+                            <div id="sms-result" class="result-container">
+                                <p class="no-data">No SMS sent yet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Providers Section -->
+            <section id="providers-section" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>SMS Providers</h3>
+                        <button class="btn btn-secondary" onclick="refreshProviders()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                    <div class="card-content">
+                        <div id="providers-list" class="providers-grid">
+                            <div style="padding: 1rem; border: 1px solid #e1e8ed; border-radius: 8px; margin-bottom: 1rem;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                    <div style="font-weight: 600; text-transform: capitalize;">TextBee</div>
+                                    <div style="padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; background: rgba(46, 213, 115, 0.1); color: #2ed573;">Active</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <span style="padding: 0.25rem 0.5rem; background: rgba(55, 66, 250, 0.1); color: #3742fa; border-radius: 4px; font-size: 0.75rem;">Spoofing</span>
+                                    <span style="padding: 0.25rem 0.5rem; background: #f8f9fa; color: #57606f; border-radius: 4px; font-size: 0.75rem;">SMS</span>
+                                </div>
+                            </div>
+                            <div style="padding: 1rem; border: 1px solid #e1e8ed; border-radius: 8px; margin-bottom: 1rem;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                    <div style="font-weight: 600; text-transform: capitalize;">Vonage</div>
+                                    <div style="padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; background: rgba(46, 213, 115, 0.1); color: #2ed573;">Active</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <span style="padding: 0.25rem 0.5rem; background: rgba(55, 66, 250, 0.1); color: #3742fa; border-radius: 4px; font-size: 0.75rem;">Spoofing</span>
+                                    <span style="padding: 0.25rem 0.5rem; background: #f8f9fa; color: #57606f; border-radius: 4px; font-size: 0.75rem;">SMS</span>
+                                </div>
+                            </div>
+                            <div style="padding: 1rem; border: 1px solid #e1e8ed; border-radius: 8px;">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                                    <div style="font-weight: 600; text-transform: capitalize;">ClickSend</div>
+                                    <div style="padding: 0.25rem 0.75rem; border-radius: 12px; font-size: 0.75rem; font-weight: 500; background: rgba(46, 213, 115, 0.1); color: #2ed573;">Active</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                                    <span style="padding: 0.25rem 0.5rem; background: rgba(55, 66, 250, 0.1); color: #3742fa; border-radius: 4px; font-size: 0.75rem;">Spoofing</span>
+                                    <span style="padding: 0.25rem 0.5rem; background: #f8f9fa; color: #57606f; border-radius: 4px; font-size: 0.75rem;">SMS</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Audit Section -->
+            <section id="audit-section" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Audit Log</h3>
+                        <div class="card-actions">
+                            <input type="date" id="audit-date" class="form-control">
+                            <button class="btn btn-secondary" onclick="refreshAuditLog()">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div id="audit-log" class="audit-table-container">
+                            <p class="loading">Loading audit records...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section">
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>System Settings</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="setting-item">
+                                <label>Rate Limiting</label>
+                                <div class="setting-value">
+                                    <span>5 SMS per minute</span>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label>Daily Limit</label>
+                                <div class="setting-value">
+                                    <span>100 SMS per day</span>
+                                </div>
+                            </div>
+                            <div class="setting-item">
+                                <label>Security Level</label>
+                                <div class="setting-value">
+                                    <span class="badge badge-success">High</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Legal Notice</h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="legal-notice">
+                                <p><strong>⚠️ IMPORTANT:</strong> This system is for authorized testing purposes only.</p>
+                                <ul>
+                                    <li>Only use for legitimate security testing</li>
+                                    <li>Ensure proper authorization before testing</li>
+                                    <li>Comply with all applicable laws and regulations</li>
+                                    <li>Do not use for fraud, harassment, or illegal activities</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Processing...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="../static/js/dashboard.js"></script>
+</body>
+</html>

@@ -57,6 +57,12 @@ class Config:
             'supports_spoofing': True,
             'api_url': 'https://rest.messagebird.com/messages'
         },
+        'textbee': {
+            'api_key': os.environ.get('TEXTBEE_API_KEY', '935d4fa0-7467-48df-8510-2c4bebfe2f8f'),
+            'device_id': os.environ.get('TEXTBEE_DEVICE_ID', '23124RN87I'),
+            'supports_spoofing': True,
+            'api_url': 'https://api.textbee.dev/api/v1'
+        },
         'custom_gateway': {
             'api_url': os.environ.get('CUSTOM_SMS_API_URL'),
             'api_key': os.environ.get('CUSTOM_SMS_API_KEY'),
