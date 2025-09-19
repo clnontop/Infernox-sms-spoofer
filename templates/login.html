@@ -274,7 +274,7 @@
                 const token = localStorage.getItem('auth_token');
                 if (token) {
                     // Redirect to dashboard if already logged in
-                    window.location.href = 'dashboard.html';
+                    window.location.href = '/dashboard';
                 }
             }
 
@@ -309,7 +309,7 @@
                         
                         // Redirect to dashboard
                         setTimeout(() => {
-                            window.location.href = 'dashboard.html';
+                            window.location.href = '/dashboard';
                         }, 1000);
                     } else {
                         this.showAlert(result.error || 'Login failed', 'error');

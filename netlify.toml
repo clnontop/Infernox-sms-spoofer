@@ -26,6 +26,11 @@
   status = 200
 
 [[redirects]]
+  from = "/dashboard.html"
+  to = "/templates/dashboard.html"
+  status = 200
+
+[[redirects]]
   from = "/"
   to = "/templates/login.html"
   status = 200

@@ -103,7 +103,7 @@ class Dashboard {
     }
 
     redirectToLogin() {
-        window.location.href = 'login.html';
+        window.location.href = '/login';
     }
 
     async loadDashboardData() {
